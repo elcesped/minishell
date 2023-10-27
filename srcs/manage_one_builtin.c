@@ -6,7 +6,7 @@
 /*   By: mvachera <mvachera@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/18 18:01:39 by mvachera          #+#    #+#             */
-/*   Updated: 2023/10/19 20:22:47 by mvachera         ###   ########.fr       */
+/*   Updated: 2023/10/25 21:46:11 by mvachera         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,13 +27,25 @@ int	handle_builtin(t_pipex *pipex, char *str)
 			handle_exit(pipex, i);
 		else if (ft_strcmp(pipex->tab[i], "cd") == 0
 			&& pipex->token[i] == BUILTIN)
-			return (manage_builtin("cd", pipex), 1);
+			return (execute_builtin("cd", pipex, 0), 1);
 		else if (ft_strcmp(pipex->tab[i], "unset") == 0
 			&& pipex->token[i] == BUILTIN)
-			return (manage_builtin("unset", pipex), 1);
+			return (execute_builtin("unset", pipex, 0), 1);
 		else if (ft_strcmp(pipex->tab[i], "export") == 0
 			&& pipex->token[i] == BUILTIN)
-			return (manage_builtin("export", pipex), 1);
+			return (execute_builtin("export", pipex, 0), 1);
+		else if (ft_strcmp(pipex->tab[i], "echo") == 0
+			&& pipex->token[i] == BUILTIN)
+			return (execute_builtin("echo", pipex, 0), 1);
+		else if (ft_strcmp(pipex->tab[i], "echo -n") == 0
+			&& pipex->token[i] == BUILTIN)
+			return (execute_builtin("echo -n", pipex, 0), 1);
+		else if (ft_strcmp(pipex->tab[i], "pwd") == 0
+			&& pipex->token[i] == BUILTIN)
+			return (execute_builtin("pwd", pipex, 0), 1);
+		else if (ft_strcmp(pipex->tab[i], "env") == 0
+			&& pipex->token[i] == BUILTIN)
+			return (execute_builtin("env", pipex, 0), 1);
 		i++;
 	}
 	return (0);
@@ -64,6 +76,8 @@ void	manage_builtin(char *str, t_pipex *pipex)
 	}
 	else if (ft_strcmp(str, "unset") == 0 && nb_arg > 0)
 		unset_command(arg[0], pipex);
+	if (nb_arg > 0)
+		free_map(arg);
 	free_memory(pipex);
 }
 

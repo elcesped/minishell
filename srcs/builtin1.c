@@ -6,7 +6,7 @@
 /*   By: mvachera <mvachera@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/14 18:43:12 by mvachera          #+#    #+#             */
-/*   Updated: 2023/10/19 20:08:33 by mvachera         ###   ########.fr       */
+/*   Updated: 2023/10/25 20:43:06 by mvachera         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,22 +20,17 @@ void	echo_command(char **arg, int choice, int nb_arg)
 	if (nb_arg == 0)
 	{
 		if (choice == 1)
-			ft_putstr_fd("\n", 1);
+			printf("\n");
 		return ;
 	}
-	while (arg[i + 1])
+	while (i < nb_arg - 1)
 	{
-		ft_putstr_fd(arg[i], 1);
-		ft_putstr_fd(" ", 1);
+		printf("%s ", arg[i]);
 		i++;
 	}
-	if (choice == 0)
-		ft_putstr_fd(arg[i], 1);
-	else
-	{
-		ft_putstr_fd(arg[i], 1);
-		ft_putstr_fd("\n", 1);
-	}
+	printf("%s", arg[i]);
+	if (choice == 1)
+		printf("\n");
 }
 
 void	cd_command(char *path)
@@ -88,19 +83,18 @@ void	export_command(t_pipex *pipex, char *str)
 	env_count = 0;
 	while (pipex->envp[env_count] != NULL)
 		env_count++;
-	new_envp = malloc(sizeof(char *) * (env_count + 2));
+	new_envp = ft_calloc(sizeof(char *), (env_count + 2));
 	if (!new_envp)
 		return ;
 	i = 0;
 	while (i < env_count)
 	{
-		new_envp[i] = pipex->envp[i];
+		new_envp[i] = ft_strdup(pipex->envp[i]);
 		i++;
 	}
-	new_envp[env_count] = str;
-	new_envp[env_count + 1] = NULL;
-	if (pipex->envp2 != NULL)
-		free_map(pipex->envp2);
-	pipex->envp2 = new_envp;
-	pipex->envp = pipex->envp2;
+	new_envp[i] = ft_strdup(str);
+	
+	// if (pipex->envp != NULL)
+	free_map(pipex->envp);
+	pipex->envp = new_envp;
 }

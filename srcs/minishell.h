@@ -6,7 +6,7 @@
 /*   By: elcesped <elcesped@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/02 14:55:16 by mvachera          #+#    #+#             */
-/*   Updated: 2023/10/24 14:48:38 by elcesped         ###   ########.fr       */
+/*   Updated: 2023/10/27 15:11:23 by elcesped         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 # define MINISHELL_H
 
 # include "../ft_printf/ft_printf.h"
-# include "../gnl/get_next_line.h"
 # include "../libft/libft.h"
 # include <errno.h>
 # include <fcntl.h>
@@ -28,7 +27,7 @@
 # include <sys/types.h>
 # include <sys/wait.h>
 # include <unistd.h>
-# include <signal.h> //a ajouter dans la librairie
+# include <signal.h> //ajout
 
 typedef struct s_pipex
 {
@@ -36,9 +35,7 @@ typedef struct s_pipex
 	char	**cmd_paths;
 	char	**cmd_args;
 	char	**envp;
-	char	**envp2;
 	char	*limiteur;
-	char	*str_end;
 	char	*file_here_doc;
 	int		cmd_count;
 	int		pipefd[2];
@@ -49,10 +46,10 @@ typedef struct s_pipex
 	char	**tab;
 	int		*token;
 
-	char	**files;
-	int		*type;
+	int		*quote; //ajout
 
 	int		code_err;
+
 }			t_pipex;
 
 enum		e_token
@@ -69,6 +66,9 @@ enum		e_token
 	COMMAND,
 	ARGUMENT,
 	RANDOM,
+	VARIABLE, // ajout
+	QUOTE, //ajout
+	NO_QUOTE, //ajout
 };
 
 int			main_pipex(char *str, t_pipex *pipex);
@@ -81,7 +81,6 @@ void		ft_here_doc(t_pipex *pipex);
 char		*str_johnny(char *s1, char *s2);
 int			ft_count(char const *s, char c);
 int			nb_cmd(t_pipex *pipex);
-void		je_souffre_trop(t_pipex *pipex);
 
 void		echo_command(char **arg, int choice, int nb_arg);
 void		cd_utils(char *path);
@@ -91,7 +90,7 @@ void		export_command(t_pipex *pipex, char *str);
 void		unset_command(char *var, t_pipex *pipex);
 int			check_unset(char *var, t_pipex *pipex, int len_var);
 void		env_command(t_pipex *pipex);
-void		execute_builtin(char *str, t_pipex *pipex);
+void		execute_builtin(char *str, t_pipex *pipex, int to_free);
 void		execute_builtin2(char *str, t_pipex *pipex, char **arg, int nb_arg);
 char		**get_arg(char *str, t_pipex *pipex, int nb_arg);
 void		get_arg2(t_pipex *pipex, int *i, int *nb_arg, char **all_arg);
@@ -109,14 +108,16 @@ void		extract_to_tab(char **tab, char *str, int count);
 void		extract_to_tab2(char *str, int *i, int *j);
 void		letters_arg(char *str, int *j);
 int			stop_str(char *str);
-int			check_tab(char **tab, int count);
+int			check_quotes(char **tab, t_pipex *quote, int count); //modif
 void		handle_quotes(char *str);
 char		*handle_quotes2(char *str);
+int			check_random(t_pipex *pipex, int count);
 int			check_first_str(char *str);
+int			is_meta_string(char *str);
 int			is_metacaractere(char c);
 char		*cpy(char *str, int i, int j);
-void		sort_token(char **tab, int *token, int i);
-void		sort_token2(char **tab, int *token, int i);
+void		sort_token(char **tab, int *token, int i, int *quote); //modif
+void		sort_token2(char **tab, int *token, int i, int *quote); //modif
 int			check_builtin(char *str);
 void		free_memory(t_pipex *pipex);
 void		free_pipex(t_pipex *pipex);
@@ -134,7 +135,7 @@ void		openfiles(t_pipex *pipex, char *cmd);
 void		handle_in_files(t_pipex *pipex, int i);
 void		handle_out_files(t_pipex *pipex, int i);
 void		check_here_doc(t_pipex *pipex);
-
-void		test_print(t_pipex *pipex);
+void		print_error_syntax(char c, char d, int i);
+int			ft_handle_size(char *tab);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: mvachera <mvachera@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/14 21:20:40 by mvachera          #+#    #+#             */
-/*   Updated: 2023/10/23 21:39:37 by mvachera         ###   ########.fr       */
+/*   Updated: 2023/10/25 20:45:19 by mvachera         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,10 +29,11 @@ int	check_unset(char *var, t_pipex *pipex, int len_var)
 
 void	unset_command(char *var, t_pipex *pipex)
 {
-	int	i;
-	int	j;
-	int	len_envp;
-	int	len_var;
+	char	**new_envp;
+	int		i;
+	int		j;
+	int		len_envp;
+	int		len_var;
 
 	len_envp = 0;
 	len_var = ft_strlen(var);
@@ -40,8 +41,8 @@ void	unset_command(char *var, t_pipex *pipex)
 		return ;
 	while (pipex->envp[len_envp])
 		len_envp++;
-	pipex->envp2 = malloc(sizeof(char *) * (len_envp + 1));
-	if (!pipex->envp2)
+	new_envp = ft_calloc(sizeof(char *), (len_envp + 1));
+	if (!new_envp)
 		return ;
 	i = 0;
 	j = 0;
@@ -50,12 +51,10 @@ void	unset_command(char *var, t_pipex *pipex)
 		if (ft_strncmp(pipex->envp[i], var, len_var) == 0
 			&& pipex->envp[i][len_var] == '=')
 			i++;
-		pipex->envp2[j] = pipex->envp[i];
-		j++;
-		i++;
+		new_envp[j++] = ft_strdup(pipex->envp[i++]);
 	}
-	pipex->envp2[j] = 0;
-	pipex->envp = pipex->envp2;
+	free_map(pipex->envp);
+	pipex->envp = new_envp;
 }
 
 void	env_command(t_pipex *pipex)

@@ -3,14 +3,41 @@
 /*                                                        :::      ::::::::   */
 /*   handle_quote.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mvachera <mvachera@student.42.fr>          +#+  +:+       +#+        */
+/*   By: elcesped <elcesped@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/17 15:37:58 by mvachera          #+#    #+#             */
-/*   Updated: 2023/10/17 15:52:11 by mvachera         ###   ########.fr       */
+/*   Updated: 2023/10/26 19:33:06 by elcesped         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+//modif
+int	check_quotes(char **tab, t_pipex *pipex, int count)
+{
+	int		i;
+	char	*tmp;
+
+	i = 0;
+	pipex->quote = 0; //ajout
+	pipex->quote = malloc(sizeof(int) * (count)); //ajout
+	if (!pipex->quote) //ajout
+		return (-1); //ajout
+	while (tab[i])
+	{
+		pipex->quote[i] = NO_QUOTE; //ajout
+		if (tab[i][0] == '\'' || tab[i][0] == '\"')
+		{
+			pipex->quote[i] = QUOTE; //ajout
+			handle_quotes(tab[i]);
+			tmp = handle_quotes2(tab[i]);
+			free(tab[i]);
+			tab[i] = tmp;
+		}
+		i++;
+	}
+	return (0);
+}
 
 void	handle_quotes(char *str)
 {

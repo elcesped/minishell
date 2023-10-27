@@ -6,7 +6,7 @@
 /*   By: mvachera <mvachera@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/17 16:03:50 by mvachera          #+#    #+#             */
-/*   Updated: 2023/10/23 19:12:46 by mvachera         ###   ########.fr       */
+/*   Updated: 2023/10/24 20:28:31 by mvachera         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,9 +43,7 @@ char	**get_all_cmd(t_pipex *pipex)
 
 void	get_all_cmd2(t_pipex *pipex, int *i, char **all_cmd)
 {
-	if (pipex->tab[i[0]][0] == '\'' || pipex->tab[i[0]][0] == '\"')
-		all_cmd[i[1]] = handle_quotes2(pipex->tab[i[0]]);
-	else if (check_arg(pipex->tab[i[0]], pipex) == 1
+	if (check_arg(pipex->tab[i[0]], pipex) == 1
 		&& pipex->token[i[0]] == COMMAND)
 		all_cmd[i[1]] = manage_arg(pipex->tab[i[0]], pipex);
 	else

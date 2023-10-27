@@ -6,27 +6,51 @@
 /*   By: elcesped <elcesped@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/10 17:11:40 by mvachera          #+#    #+#             */
-/*   Updated: 2023/10/25 19:12:16 by elcesped         ###   ########.fr       */
+/*   Updated: 2023/10/26 19:36:34 by elcesped         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	check_tab(char **tab, int count)
+int	check_random(t_pipex *pipex, int count)
 {
 	int	i;
 
 	i = 0;
-	(void) count;
-	if (ft_strcmp(tab[0], "|") == 0)
-		return (ft_printf("syntax error near unexpected token `|'\n"), 0);
-	while (tab[i])
+	if (ft_strcmp(pipex->tab[0], "|") == 0)
+		return (ft_printf("syntax error near unexpected token `|'\n"), 1);
+	while (pipex->tab[i])
 	{
-		if (tab[i][0] == '\'' || tab[i][0] == '\"')
-			handle_quotes(tab[i]);
+		if (pipex->token[i] == RANDOM && pipex->quote[i] == NO_QUOTE) //modif
+			return (ft_handle_size(pipex->tab[i]));
+		if (pipex->tab[i + 1] && is_meta_string(pipex->tab[i]) == 1
+			&& is_meta_string(pipex->tab[i + 1]) == 1 && pipex->quote[i] == NO_QUOTE) //modif
+		{
+			if (ft_strlen(pipex->tab[i + 1]) == 1)
+				return (print_error_syntax(pipex->tab[i + 1][0], 0, 1), 2);
+			else
+				return (print_error_syntax(pipex->tab[i + 1][0],
+					pipex->tab[i + 1][1], 2), 2);
+		}
 		i++;
 	}
-	return (1);
+	 if (pipex->token[count - 1] >= 0 && pipex->token[count - 1] <= 4 && pipex->quote[count - 1] == NO_QUOTE) //modif
+		 return (ft_printf("syntax error near unexpected token `newline'\n"), 1);
+	return (0);
+}
+
+int	is_meta_string(char *str)
+{
+	int	i;
+
+	i = 0;
+	while (str[i])
+	{
+		if (is_metacaractere(str[i]) == 1)
+			return (1);
+		i++;
+	}
+	return (0);
 }
 
 int	stop_str(char *str)

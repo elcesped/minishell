@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mvachera <mvachera@student.42.fr>          +#+  +:+       +#+        */
+/*   By: elcesped <elcesped@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/12 20:40:46 by mvachera          #+#    #+#             */
-/*   Updated: 2023/10/23 21:06:44 by mvachera         ###   ########.fr       */
+/*   Updated: 2023/10/27 15:31:02 by elcesped         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,8 +64,10 @@ void	child_process(t_pipex *pipex, int index)
 	close(pipex->pipefd[1]);
 	close(pipex->pipefd[0]);
 	openfiles(pipex, pipex->cmd_args[index]);
+	if (!pipex->cmd_args[0])
+		return (free_pipex(pipex), free_map(pipex->envp), exit(0));
 	if (check_builtin(pipex->cmd_args[index]) == 1)
-		execute_builtin(pipex->cmd_args[index], pipex);
+		execute_builtin(pipex->cmd_args[index], pipex, 1);
 	tab2 = ft_split(pipex->cmd_args[index], ' ');
 	if (!tab2)
 		return (ft_printf("Function split fail\n"), exit(EXIT_FAILURE));
@@ -108,6 +110,7 @@ int	main_pipex(char *str, t_pipex *pipex)
 {
 	int	tmp;
 
+	pipex->here_doc = 0;
 	parcours_cmd(pipex);
 	pipex->cmd_count = ft_count(str, '|');
 	if (pipex->cmd_count >= 1024)

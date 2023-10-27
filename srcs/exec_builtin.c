@@ -6,13 +6,13 @@
 /*   By: mvachera <mvachera@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/16 16:00:11 by mvachera          #+#    #+#             */
-/*   Updated: 2023/10/20 15:25:36 by mvachera         ###   ########.fr       */
+/*   Updated: 2023/10/25 21:35:16 by mvachera         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	execute_builtin(char *str, t_pipex *pipex)
+void	execute_builtin(char *str, t_pipex *pipex, int to_free)
 {
 	char	**arg;
 	int		nb_arg;
@@ -29,8 +29,10 @@ void	execute_builtin(char *str, t_pipex *pipex)
 		execute_builtin2(str, pipex, arg, nb_arg);
 	if (arg != NULL)
 		free_map(arg);
-	free_pipex(pipex);
-	exit(0);
+	if (to_free == 0)
+		free_memory(pipex);
+	else
+		return (free_pipex(pipex), exit(0));
 }
 
 void	execute_builtin2(char *str, t_pipex *pipex, char **arg, int nb_arg)
